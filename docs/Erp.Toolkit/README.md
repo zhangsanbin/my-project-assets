@@ -18,6 +18,8 @@
 - 条件样式和格式化
 - 主从表格视图
 - 自定义列配置
+- 统计、打印和导出
+- 内置搜索和过滤功能
 - 更多企业级 UI 组件
 
 ## 支持的框架
@@ -39,7 +41,7 @@ dotnet pack --configuration Release
 dotnet pack --configuration Release --output ./nupkgs
 
 # 使用 dotnet CLI 上传到 NuGet 服务器
-dotnet nuget push ./nupkgs/Erp.Toolkit.0.2.5.nupkg --api-key API_KEY --source https://api.nuget.org/v3/index.json
+dotnet nuget push ./nupkgs/Erp.Toolkit.0.3.3.nupkg --api-key API_KEY --source https://api.nuget.org/v3/index.json
 ```
 
 ## 安装
@@ -52,7 +54,8 @@ Install-Package Erp.Toolkit
 
 ## 如何使用
 
-### [完整示例代码连接](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/samples/Erp.Toolkit/WinFormSample.cs)
+| [快速入门](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/samples/Erp.Toolkit/WinFormSample.cs) | [完整示例](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/samples/Erp.Toolkit/WinFormExampleFull.cs) | [NuGet程序包](https://www.nuget.org/packages/Erp.Toolkit) |
+| -- | -- | -- |
 
 ```csharp
 // 创建控件
@@ -66,13 +69,7 @@ Controls.Add(dgv);
 dgv.Dock = DockStyle.Fill;
 
 // 填充顶级主视图的数据
-dgv.FillList(sampleData, this.Text);
-
-// 启用二级子视图并填充数据
-dgv.FillSubviewWithList(sampleData);
-
-// 设置二级子视图的工具条和导航条的可视化状态
-dgv.subview.ToolStripVisible = false;
+dgv.FillList(sampleData, this.Name);
 
 // 设置主题
 dgv.ThemeStyle = ThemeStyle.blue;
@@ -82,11 +79,12 @@ List<DgvUserContextMenuStripConfig> menuConfigs = new List<DgvUserContextMenuStr
 {
     new DgvUserContextMenuStripConfig
     {
-        MenuText = "BOM清单",
+        MenuText = "详细档案",
         Target = MenuShowTarget.ToolStrip | MenuShowTarget.ContextMenuStrip,
         Group = 1,
         ClickHandler = (senders, es) => {
-            var winFrom = new DM_BomsView(this, 0, 0);
+            var winFrom = new WinFormSample();
+            winFrom.Text = $"查看员工 {dgv.GetSelectedItemIds()} 的详细档案";
             winFrom.ShowDialog();
         }
     },
@@ -159,32 +157,6 @@ private List<SampleData> GenerateSampleData()
             Email = "wangqiang@doipc.com",
             Phone = "13700137003",
             IsActive = true
-        },
-        new SampleData
-        {
-            Id = 4,
-            Name = "刘小红",
-            Age = 35,
-            Department = "财务部",
-            Position = "财务主管",
-            Salary = 18000m,
-            JoinDate = new DateTime(2018, 5, 6),
-            Email = "liuxiaohong@doipc.com",
-            Phone = "13600136004",
-            IsActive = true
-        },
-        new SampleData
-        {
-            Id = 5,
-            Name = "陈建国",
-            Age = 45,
-            Department = "管理层",
-            Position = "技术总监",
-            Salary = 25000m,
-            JoinDate = new DateTime(2015, 11, 30),
-            Email = "chenjianguo@doipc.com",
-            Phone = "13500135005",
-            IsActive = true
         }
     };
 }
@@ -192,7 +164,8 @@ private List<SampleData> GenerateSampleData()
 
 ## 示例代码
 
-- [完整示例代码连接](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/samples/Erp.Toolkit/WinFormSample.cs)
+- [快速入门](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/samples/Erp.Toolkit/WinFormSample.cs)
+- [完整示例](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/samples/Erp.Toolkit/WinFormExampleFull.cs)
 - [条件样式配置](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/scripts/Erp.Toolkit/WINFORMSAMPLE.CFG.JSON)
 - [自定义列配置](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/scripts/Erp.Toolkit/WINFORMSAMPLE.COL.JSON)
 - [NuGet程序包](https://www.nuget.org/packages/Erp.Toolkit)
@@ -209,5 +182,5 @@ private List<SampleData> GenerateSampleData()
 
 ---
 
-> @zhangsanbin :+1: This project looks great - it's ready to pull! :shipit:
+> @zhangsanbin :+1: This project looks great - it's ready to pull!
 > - [x] I have reviewed the code changes.
