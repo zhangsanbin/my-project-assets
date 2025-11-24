@@ -11,21 +11,30 @@
 using Erp.Toolkit.Controls;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
-namespace Erp.Toolkit.Sample
+namespace Erp.Toolkit.ExampleFull
 {
-    public partial class WinFormSample : Form
+    /// <summary>
+    /// Erp.Toolkit WinForm 使用示例
+    /// </summary>
+    public partial class WinFormExampleFull : Form
     {
         // 创建控件
         private Erp.Toolkit.Controls.Dgv dgv = new Erp.Toolkit.Controls.Dgv();
 
-        public WinFormSample()
+        // 示例数据源（项目）
+        private List<ProjectData> _allProjectData;
+
+        public WinFormExampleFull()
         {
             InitializeComponent();
 
             // 示例数据
             var sampleData = GenerateSampleData();
+            _allProjectData = GenerateProjectData(sampleData);
 
             // 呈现在UI层
             Controls.Add(dgv);
@@ -33,6 +42,12 @@ namespace Erp.Toolkit.Sample
 
             // 填充顶级主视图的数据
             dgv.FillList(sampleData, this.Name);
+
+            // 启用子视图并初始化（不填充数据）
+            dgv.SubviewsEnable();
+
+            // 开启，百分比进度条显示模式
+            dgv.subview.ProgressColumnsName = "Progress";
 
             // 设置主题
             dgv.ThemeStyle = ThemeStyle.blue;
@@ -46,16 +61,97 @@ namespace Erp.Toolkit.Sample
                     Target = MenuShowTarget.ToolStrip | MenuShowTarget.ContextMenuStrip,
                     Group = 1,
                     ClickHandler = (senders, es) => {
-                        // 简单测试，弹出窗口显示选中项ID
-                        var winFrom = new WinFormSample();
+                        var winFrom = new WinFormExampleFull();
                         winFrom.Text = $"查看员工 {dgv.GetSelectedItemIds()} 的详细档案";
                         winFrom.ShowDialog();
                     }
-                },
+                }
             };
 
             // 构建用户菜单配置
             dgv.SetUserContextMenu(menuConfigs);
+
+            // 订阅事件
+            SubscribeEvent();
+        }
+
+        /// <summary>
+        /// 订阅所需的事件
+        /// </summary>
+        private void SubscribeEvent()
+        {
+            // 展开事件
+            dgv.MasterSlaveDataExpand += Dgv_MasterSlaveDataExpand;
+
+            // 双击事件
+            dgv.DoubleClickDgv += Dgv_DoubleClickDgv;
+
+            // 新增事件
+            dgv.AddDgv += Dgv_AddClickDgv;
+
+            // 删除事件
+            dgv.DeleteDgv += Dgv_DeleteDgv;
+
+            // 根据事件重新刷新按钮状态
+            dgv.RefreshButtonState();
+        }
+
+        /// <summary>
+        /// 主从数据展开事件
+        /// </summary>
+        private void Dgv_MasterSlaveDataExpand(object sender, DataGridViewCellMouseEventArgs e, string id, Rectangle rect)
+        {
+            if (int.TryParse(id, out int userId))
+            {
+                // 根据用户ID获取对应的项目数据
+                var userProjects = _allProjectData
+                    .Where(p => p.UserId == userId)
+                    .ToList();
+
+                // 填充子数据
+                dgv.FillSubviewWithList(userProjects);
+
+                // 设置二级子视图的工具条不可见
+                dgv.subview.ToolStripVisible = false;
+            }
+        }
+
+        /// <summary>
+        /// 双击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="id"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void Dgv_DoubleClickDgv(object sender, EventArgs e, string id)
+        {
+            // 调用 API 接口，或其他操作
+            Console.WriteLine($"双击了 ID 为 {id} 的行");
+        }
+
+        /// <summary>
+        /// 新增事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void Dgv_AddClickDgv(object sender, EventArgs e)
+        {
+            // 调用 API 接口，或其他操作
+            Console.WriteLine("点击了新增按钮");
+        }
+
+        /// <summary>
+        /// 删除事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="id"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void Dgv_DeleteDgv(object sender, DgvDeleteEventArgs e, string id)
+        {
+            // 调用 API 接口，或其他操作
+            Console.WriteLine("点击了删除按钮，待删除 ID 列表：" + id);
         }
 
         /// <summary>
@@ -198,10 +294,79 @@ namespace Erp.Toolkit.Sample
                 }
             };
         }
+
+        /// <summary>
+        /// 生成项目数据
+        /// </summary>
+        /// <param name="employees"></param>
+        /// <returns></returns>
+        private List<ProjectData> GenerateProjectData(List<SampleData> employees)
+        {
+            var projects = new List<ProjectData>();
+            var random = new Random();
+
+            foreach (var employee in employees)
+            {
+                // 每个员工分配2-5个项目
+                int projectCount = random.Next(2, 6);
+
+                for (int i = 0; i < projectCount; i++)
+                {
+                    var startDate = DateTime.Now.AddDays(-random.Next(30, 180));
+                    var endDate = startDate.AddDays(random.Next(30, 180));
+                    var progress = random.Next(0, 101);
+
+                    string status;
+                    if (progress == 0)
+                        status = "未开始";
+                    else if (progress == 100)
+                        status = "已完成";
+                    else if (progress < 50)
+                        status = "进行中";
+                    else
+                        status = "延期";
+
+                    projects.Add(new ProjectData
+                    {
+                        Id = projects.Count + 1,
+                        UserId = employee.Id,
+                        ProjectName = $"项目-{employee.Name}-{i + 1}",
+                        Progress = progress,
+                        Status = status,
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        CurrentMilestone = GetMilestoneByProgress(progress)
+                    });
+                }
+            }
+
+            return projects;
+        }
+
+        /// <summary>
+        /// 根据进度获取当前节点
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <returns></returns>
+        private string GetMilestoneByProgress(int progress)
+        {
+            if (progress < 20)
+                return "需求分析";
+            else if (progress < 40)
+                return "设计阶段";
+            else if (progress < 60)
+                return "开发阶段";
+            else if (progress < 80)
+                return "测试阶段";
+            else if (progress < 100)
+                return "上线准备";
+            else
+                return "项目完成";
+        }
     }
 
     /// <summary>
-    /// 示例数据模型
+    /// 示例数据类
     /// </summary>
     internal class SampleData
     {
@@ -217,5 +382,20 @@ namespace Erp.Toolkit.Sample
         public bool IsActive { get; set; }
         public string Status => IsActive ? "在职" : "离职";
         public int WorkYears => DateTime.Now.Year - JoinDate.Year;
+    }
+
+    /// <summary>
+    /// 项目数据类
+    /// </summary>
+    internal class ProjectData
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public string ProjectName { get; set; }
+        public int Progress { get; set; }
+        public string Status { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string CurrentMilestone { get; set; }
     }
 }
