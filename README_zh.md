@@ -1,10 +1,11 @@
 # Erp.Toolkit
 
-[![Docker Image Size](https://img.shields.io/docker/image-size/doipc/erpwebapi)](https://hub.docker.com/r/doipc/erpwebapi)
-[![License](https://img.shields.io/github/license/zhangsanbin/my-project-assets)](./LICENSE)
-[![Docker](https://img.shields.io/badge/docker-latest-blue?logo=docker)](https://hub.docker.com/r/doipc/erpwebapi)
-![commit activity](https://img.shields.io/github/commit-activity/y/zhangsanbin/my-project-assets)
-[![Pulls](https://img.shields.io/docker/pulls/doipc/erpwebapi)](https://hub.docker.com/r/doipc/erpwebapi)
+[![Docker Image Size](https://img.shields.io/docker/image-size/doipc/erpwebapi?color=0db7ed)](https://hub.docker.com/r/doipc/erpwebapi)
+[![License](https://img.shields.io/github/license/zhangsanbin/my-project-assets?color=97ca00)](./LICENSE)
+[![Docker](https://img.shields.io/badge/docker-latest-0db7ed?logo=docker)](https://hub.docker.com/r/doipc/erpwebapi)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/y/zhangsanbin/my-project-assets?color=fe7d37)](https://github.com/zhangsanbin/my-project-assets)
+[![Pulls](https://img.shields.io/docker/pulls/doipc/erpwebapi?color=6f42c1)](https://hub.docker.com/r/doipc/erpwebapi)
+[![NuGet Version](https://img.shields.io/nuget/v/Erp.Toolkit?color=005cc5)](https://www.nuget.org/packages/Erp.Toolkit)
 
 [English](README.md) | [中文](README_zh.md)
 
@@ -43,7 +44,7 @@ dotnet pack --configuration Release
 dotnet pack --configuration Release --output ./nupkgs
 
 # 使用 dotnet CLI 上传到 NuGet 服务器
-dotnet nuget push ./nupkgs/Erp.Toolkit.0.3.3.nupkg --api-key API_KEY --source https://api.nuget.org/v3/index.json
+dotnet nuget push ./nupkgs/Erp.Toolkit.0.3.6.nupkg --api-key API_KEY --source https://api.nuget.org/v3/index.json
 ```
 
 ## 安装
@@ -171,6 +172,8 @@ private List<SampleData> GenerateSampleData()
 - [条件样式配置](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/scripts/Erp.Toolkit/WINFORMSAMPLE.CFG.JSON)
 - [自定义列配置](https://raw.githubusercontent.com/zhangsanbin/my-project-assets/refs/heads/main/scripts/Erp.Toolkit/WINFORMSAMPLE.COL.JSON)
 - [NuGet程序包](https://www.nuget.org/packages/Erp.Toolkit)
+- [英文自述](https://github.com/zhangsanbin/my-project-assets/blob/main/docs/Erp.Toolkit/README.md)
+- [中文自述](https://github.com/zhangsanbin/my-project-assets/blob/main/docs/Erp.Toolkit/README_zh.md)
 
 > [!TIP]
 > Erp.Toolkit - 让企业级开发不再复杂！
